@@ -1,0 +1,665 @@
+@using PagedList.Mvc;
+@using PagedList;
+@using System.Globalization;
+@using System.Data;
+
+@model TMHA.Models.PaymentAllocationFormSetup
+
+@{
+    ViewBag.Title = "Payment Allocation Form Setup";
+}
+
+<!-- Bootstrap 4 CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- Font Awesome 5 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+    body {
+        background-color: #f5f5f5;
+        padding: 0px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background-color: white;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px 20px;
+    }
+
+    .card-title {
+        color: #dc3545;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .form-group label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+
+        .form-control:read-only {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+    .insert-link {
+        color: #dc3545;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .insert-link:hover {
+            text-decoration: underline;
+        }
+
+    .form-control:read-only,
+    .form-control[readonly] {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        border: none;
+        background-color: transparent;
+        padding: 10px 20px;
+    }
+
+        .nav-tabs .nav-link.active {
+            background-color: #ffffff;
+            color: #343a40;
+            border: 1px solid #dee2e6;
+            border-bottom-color: transparent;
+        }
+
+    .table {
+        background-color: white;
+    }
+
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 12px;
+        }
+
+        .table tbody td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .table tbody tr.table-active {
+            background-color: #cce5ff !important;
+        }
+
+
+        .table a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            .table a:hover {
+                text-decoration: underline;
+            }
+
+    .search-section {
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 4px;
+    }
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .search-box input {
+            height: 32px;
+            width: 160px;
+            padding: 0 10px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: #fff;
+        }
+
+            .search-box input:focus {
+                outline: none;
+                border-color: #c62828;
+            }
+
+    .btn-search {
+        height: 32px;
+        background-color: #d32f2f;
+        color: #fff;
+        padding: 0 14px;
+        border: none;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+        .btn-search:hover {
+            background-color: #b71c1c;
+        }
+
+        .btn-search i {
+            font-size: 12px;
+        }
+
+    .pagination-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .sortable {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .sort-icons {
+        float: right;
+        align-items: center;
+        gap: 4px;
+        margin-left: 6px;
+        vertical-align: middle;
+    }
+
+        .sort-icons i {
+            font-size: 9px;
+            font-weight: 300;
+            color: #9aa0a6;
+            float: right;
+        }
+
+    .sortable:hover .sort-icons i {
+        color: #000;
+    }
+
+    .nav-tabs {
+        border-bottom: none;
+    }
+
+        .nav-tabs .nav-link {
+            border-radius: 4px 4px 0 0;
+            margin-right: 4px;
+            background-color: #f1f3f5;
+            color: #6cb2eb;
+            font-weight: 500;
+        }
+
+            .nav-tabs .nav-link.active {
+                background-color: #ffffff;
+                color: #000000;
+                border: 1px solid #dee2e6;
+                border-bottom-color: transparent;
+            }
+
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-radius: 0 2px 2px 2px;
+        background-color: #ffffff;
+        padding: 20px;
+    }
+
+    .table {
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .small-text {
+        font-size: 0.8rem;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #000000;
+    }
+
+    .left-form {
+        display: none;
+    }
+
+        .left-form.active {
+            display: block;
+        }
+
+    .actions-divider {
+        border-top: 1px solid #dee2e6;
+        padding-top: 15px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Message Display Area -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Left Column - Forms (Switch based on active tab) -->
+        <div class="col-md-4">
+            <!-- User Management Form -->
+            <div class="card left-form active" id="userForm">
+                <div class="card-header">
+                    <h5 class="card-title">User Management</h5>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("UpdateUser", "PaymentAllocationFormSetup", FormMethod.Post, new { id = "userFormElement" }))
+                    {
+                        @Html.HiddenFor(m => m.UserManagementID, new { id = "userId" })
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Username, "Username")
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "username", required = "required" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.UserEmailAddress, "Email Address")
+                            @Html.TextBoxFor(m => m.UserEmailAddress, new { @class = "form-control", id = "email", type = "email", required = "required" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.UserAccessLevelID, "Access Level")
+                            @Html.DropDownListFor(m => m.UserAccessLevelID, new SelectList(new[]
+                            {
+                                new { Value = 0, Text = "--Please Select--" },
+                                new { Value = 1, Text = "Admin" },
+                                new { Value = 2, Text = "National Banking" },
+                                new { Value = 3, Text = "National Credit" }
+                            }, "Value", "Text"), new { @class = "form-control", id = "accessLevel", required = "required" })
+                            
+                            <div class="form-group">
+                                <ul class="list-group" id="accessLevelList"></ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <a href="#" class="insert-link" id="insertAccessLevelLink">
+                                <i class="fas fa-plus-square"></i> Insert Access Level
+                                <i class="fas fa-sync-alt ml-1"></i>
+                            </a>
+                        </div>
+
+                        <div class="form-group actions-divider">
+                            <label for="userActions">Actions</label>
+                            <select class="form-control" id="userActions" name="userActions" required>
+                                <option value="Update">Update</option>
+                                <option value="Delete">Delete</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="userConfirmCheck" name="confirmCheck" value="true">
+                                <label class="form-check-label" for="userConfirmCheck">
+                                    Confirm all details above have been verified?
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger mr-2" id="userSubmitBtn">Submit</button>
+                            <button type="button" class="btn btn-danger" onclick="clearUserForm()">Cancel/Clear</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Payment Allocation Forms Setup -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Payment Allocation Forms Setup</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active small-text" id="user-tab" data-toggle="tab" href="#userManagement" role="tab">User Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link small-text" id="group-tab" href="/PaymentGroupManagementForm/Index" role="tab">Group Management</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-0" id="myTabContent">
+                        <!-- User Management Tab -->
+                        <div class="tab-pane fade show active" id="userManagement" role="tabpanel">
+                            @Html.Partial("_UserManagementTab")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 4 JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        loadUsers();
+
+        /* ===============================
+           USER FORM SUBMIT
+        =============================== */
+        $('#userFormElement').on('submit', function (e) {
+            e.preventDefault();
+
+            var action = $('#userActions').val();
+
+            if (action === 'Update') {
+                updateUser();
+            } else if (action === 'Delete') {
+                deleteUser();
+            }
+        });
+
+        /* ===============================
+           TABLE ROW CLICK → FILL FORM
+        =============================== */
+        $(document).on('click', '#userManagement table tbody tr.user-row', function () {
+
+            $('#userManagement table tbody tr').removeClass('table-active');
+            $(this).addClass('table-active');
+
+            var userId = $(this).data('userid');
+            
+            // Load user details
+            $.get('/PaymentAllocationFormSetup/GetUser', { userId: userId }, function (response) {
+                if (response.success && response.result) {
+                    var user = response.result;
+                    
+                    $('#userId').val(user.UserManagementID);
+                    $('#username').val(user.Username).prop('readonly', true);
+                    $('#email').val(user.UserEmailAddress).prop('readonly', true);
+                    $('#accessLevel').val(user.UserAccessLevelID);
+                    $('#userActions').val('Update');
+                    $('#userConfirmCheck').prop('checked', false);
+                }
+            });
+
+            $('#user-tab').tab('show');
+        });
+
+        /* ===============================
+           USER ACTION CHANGE
+        =============================== */
+        $('#userActions').on('change', function () {
+            var userId = $('#userId').val();
+            if (!userId || userId === '0') {
+                alert('Please select a user from the table first.');
+                $(this).val('Update');
+            }
+        });
+
+        /* ===============================
+           SEARCH
+        =============================== */
+        $('#userManagement .btn-search').on('click', function (e) {
+            e.preventDefault();
+            filterUsers($('#userManagement .search-box input:eq(0)').val());
+        });
+
+        /* ===============================
+           INSERT ACCESS LEVEL
+        =============================== */
+        $('#insertAccessLevelLink').on('click', function (e) {
+            e.preventDefault();
+
+            var levelId = $('#accessLevel').val();
+            var levelText = $('#accessLevel option:selected').text();
+            
+            if (!levelId || levelId === '0') {
+                alert('Select an access level first.');
+                return;
+            }
+
+            var exists = false;
+            $('#accessLevelList li').each(function () {
+                if ($(this).data('levelid') === levelId) {
+                    exists = true;
+                    return false;
+                }
+            });
+
+            if (exists) {
+                alert('Access level already added.');
+                return;
+            }
+
+            $('#accessLevelList').append(
+                '<li class="list-group-item d-flex justify-content-between" data-levelid="' + levelId + '">' +
+                levelText +
+                '<button type="button" class="btn btn-sm btn-danger remove-access-level">' +
+                '<i class="fas fa-trash"></i>' +
+                '</button>' +
+                '</li>'
+            );
+        });
+
+        /* ===============================
+           REMOVE ACCESS LEVEL
+        =============================== */
+        $(document).on('click', '.remove-access-level', function () {
+            $(this).closest('li').remove();
+        });
+
+    });
+
+    /* ===============================
+       UPDATE USER (AJAX)
+    =============================== */
+    function updateUser() {
+
+        if (!$('#userConfirmCheck').is(':checked')) {
+            alert('Please confirm before updating.');
+            return;
+        }
+
+        var formData = {
+            UserManagementID: $('#userId').val(),
+            Username: $('#username').val(),
+            UserEmailAddress: $('#email').val(),
+            UserAccessLevelID: $('#accessLevel').val(),
+            confirmCheck: $('#userConfirmCheck').is(':checked')
+        };
+
+        $.ajax({
+            url: '/PaymentAllocationFormSetup/UpdateUser',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    // Update table row visually
+                    var row = $('#userManagement tr.table-active');
+                    row.data('accesslevelid', formData.UserAccessLevelID);
+                    row.find('td:eq(2)').text($('#accessLevel option:selected').text());
+
+                    alert(response.message);
+                    clearUserForm();
+                    loadUsers(); // Reload to get fresh data
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('An error occurred while updating the user.');
+            }
+        });
+    }
+
+    /* ===============================
+       DELETE USER (AJAX)
+    =============================== */
+    function deleteUser() {
+
+        if (!$('#userConfirmCheck').is(':checked')) {
+            alert('Please confirm before deleting.');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to delete this user?')) {
+            return;
+        }
+
+        var userId = $('#userId').val();
+
+        $.ajax({
+            url: '/PaymentAllocationFormSetup/DeleteUser',
+            type: 'POST',
+            data: { 
+                userId: userId,
+                confirmCheck: $('#userConfirmCheck').is(':checked')
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#userManagement tr.table-active').remove();
+                    alert(response.message);
+                    clearUserForm();
+                    loadUsers(); // Reload to get fresh data
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('An error occurred while deleting the user.');
+            }
+        });
+    }
+
+    /* ===============================
+       LOAD USERS
+    =============================== */
+    function loadUsers() {
+        $.get('/PaymentAllocationFormSetup/GetUsers', function (data) {
+            var tbody = $('#userManagement table tbody').empty();
+            if (!data || data.length === 0) return;
+
+            data.forEach(function (u) {
+                tbody.append(
+                    '<tr class="user-row" ' +
+                    'data-userid="' + u.UserId + '" ' +
+                    'data-username="' + u.Username + '" ' +
+                    'data-email="' + u.Email + '" ' +
+                    'data-accesslevelid="' + u.AccessLevelId + '">' +
+                    '<td>' + u.Username + '</td>' +
+                    '<td>' + u.Email + '</td>' +
+                    '<td>' + u.AccessLevel + '</td>' +
+                    '</tr>'
+                );
+            });
+        });
+    }
+
+    /* ===============================
+       FILTER USERS
+    =============================== */
+    function filterUsers(term) {
+        if (!term) {
+            loadUsers();
+            return;
+        }
+
+        $.get('/PaymentAllocationFormSetup/GetUsers', function (data) {
+            var tbody = $('#userManagement table tbody').empty();
+
+            data.filter(u =>
+                u.Username.toLowerCase().includes(term.toLowerCase()) ||
+                u.Email.toLowerCase().includes(term.toLowerCase())
+            ).forEach(function (u) {
+                tbody.append(
+                    '<tr class="user-row" ' +
+                    'data-userid="' + u.UserId + '" ' +
+                    'data-username="' + u.Username + '" ' +
+                    'data-email="' + u.Email + '" ' +
+                    'data-accesslevelid="' + u.AccessLevelId + '">' +
+                    '<td>' + u.Username + '</td>' +
+                    '<td>' + u.Email + '</td>' +
+                    '<td>' + u.AccessLevel + '</td>' +
+                    '</tr>'
+                );
+            });
+        });
+    }
+
+    /* ===============================
+       CLEAR FORM
+    =============================== */
+    function clearUserForm() {
+        $('#userId').val('0');
+        $('#username, #email').val('').prop('readonly', false);
+        $('#accessLevel').val('0');
+        $('#userActions').val('Update');
+        $('#userConfirmCheck').prop('checked', false);
+        $('#accessLevelList').empty();
+        $('#userManagement tr').removeClass('table-active');
+    }
+</script>
